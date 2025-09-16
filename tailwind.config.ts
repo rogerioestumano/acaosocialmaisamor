@@ -47,6 +47,13 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Custom love colors
+        love: {
+          blue: "hsl(var(--love-blue))",
+          green: "hsl(var(--love-green))",
+          gold: "hsl(var(--love-gold))",
+          light: "hsl(var(--love-light))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -57,6 +64,18 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+      },
+      backgroundImage: {
+        "gradient-primary": "var(--gradient-primary)",
+        "gradient-secondary": "var(--gradient-secondary)",
+        "gradient-hero": "var(--gradient-hero)",
+      },
+      boxShadow: {
+        "love": "var(--shadow-love)",
+        "gentle": "var(--shadow-gentle)",
+      },
+      transitionTimingFunction: {
+        "gentle": "var(--transition-gentle)",
       },
       borderRadius: {
         lg: "var(--radius)",

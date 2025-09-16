@@ -15,6 +15,11 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        // Love-themed variants for the social action app
+        love: "bg-gradient-primary text-white hover:opacity-90 shadow-love transition-all duration-300",
+        volunteer: "bg-love-blue text-white hover:bg-love-blue/90 shadow-gentle transition-all duration-300",
+        beneficiary: "bg-love-green text-white hover:bg-love-green/90 shadow-gentle transition-all duration-300",
+        hero: "bg-white/10 backdrop-blur-sm text-white border border-white/20 hover:bg-white/20 transition-all duration-300",
       },
       size: {
         default: "h-10 px-4 py-2",
