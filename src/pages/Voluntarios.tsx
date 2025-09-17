@@ -5,54 +5,36 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
-import { UserPlus, Users, Phone, Mail, MapPin } from "lucide-react";
+import { useVoluntarios } from "@/hooks/useVoluntarios";
+import { UserPlus, Users, Phone, Mail, MapPin, FileSpreadsheet, FileText, Download } from "lucide-react";
+import { exportVoluntariosToExcel, exportVoluntariosToPDF } from "@/lib/export";
 import Navigation from "@/components/Navigation";
 
-interface Voluntario {
-  id: string;
-  nome: string;
-  email: string;
-  telefone: string;
-  idade: string;
-  endereco: string;
-  area: string;
-  experiencia: string;
-  disponibilidade: string;
-  dataRegistro: string;
-}
-
 const Voluntarios = () => {
-  const { toast } = useToast();
-  const [voluntarios, setVoluntarios] = useState<Voluntario[]>([]);
+  const { voluntarios, loading, addVoluntario } = useVoluntarios();
   const [showForm, setShowForm] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
-    const novoVoluntario: Voluntario = {
-      id: Date.now().toString(),
-      nome: formData.get("nome") as string,
-      email: formData.get("email") as string,
-      telefone: formData.get("telefone") as string,
-      idade: formData.get("idade") as string,
-      endereco: formData.get("endereco") as string,
-      area: formData.get("area") as string,
-      experiencia: formData.get("experiencia") as string,
-      disponibilidade: formData.get("disponibilidade") as string,
-      dataRegistro: new Date().toLocaleDateString("pt-BR"),
-    };
+    try {
+      await addVoluntario({
+        nome: formData.get("nome") as string,
+        email: formData.get("email") as string,
+        telefone: formData.get("telefone") as string,
+        idade: parseInt(formData.get("idade") as string),
+        endereco: formData.get("endereco") as string,
+        area: formData.get("area") as string,
+        experiencia: formData.get("experiencia") as string,
+        disponibilidade: formData.get("disponibilidade") as string,
+      });
 
-    setVoluntarios([...voluntarios, novoVoluntario]);
-    setShowForm(false);
-    
-    toast({
-      title: "Voluntário cadastrado!",
-      description: "Obrigado por se voluntariar para a ação Mais Amor.",
-    });
-
-    (e.target as HTMLFormElement).reset();
+      setShowForm(false);
+      (e.target as HTMLFormElement).reset();
+    } catch (error) {
+      // Error is handled in the hook
+    }
   };
 
   return (
@@ -72,13 +54,35 @@ const Voluntarios = () => {
             </p>
           </div>
           
-          <Button 
-            onClick={() => setShowForm(!showForm)}
-            className="bg-primary hover:bg-primary/90 shadow-gentle"
-          >
-            <UserPlus className="w-4 h-4 mr-2" />
-            {showForm ? "Cancelar" : "Novo Voluntário"}
-          </Button>
+          <div className="flex gap-2">
+            {voluntarios.length > 0 && (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => exportVoluntariosToExcel(voluntarios)}
+                  className="shadow-gentle"
+                >
+                  <FileSpreadsheet className="w-4 h-4 mr-2" />
+                  Excel
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => exportVoluntariosToPDF(voluntarios)}
+                  className="shadow-gentle"
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  PDF
+                </Button>
+              </>
+            )}
+            <Button 
+              onClick={() => setShowForm(!showForm)}
+              className="bg-primary hover:bg-primary/90 shadow-gentle"
+            >
+              <UserPlus className="w-4 h-4 mr-2" />
+              {showForm ? "Cancelar" : "Novo Voluntário"}
+            </Button>
+          </div>
         </div>
 
         {/* Formulário de Cadastro */}
@@ -205,7 +209,12 @@ const Voluntarios = () => {
             Voluntários Cadastrados ({voluntarios.length})
           </h2>
           
-          {voluntarios.length === 0 ? (
+          {loading ? (
+            <Card className="p-8 text-center">
+              <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Carregando voluntários...</p>
+            </Card>
+          ) : voluntarios.length === 0 ? (
             <Card className="p-8 text-center">
               <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">
@@ -236,7 +245,7 @@ const Voluntarios = () => {
                       Idade: {voluntario.idade} anos
                     </div>
                     <div className="text-xs text-muted-foreground pt-2 border-t">
-                      Cadastrado em: {voluntario.dataRegistro}
+                      Cadastrado em: {new Date(voluntario.created_at || '').toLocaleDateString("pt-BR")}
                     </div>
                   </CardContent>
                 </Card>

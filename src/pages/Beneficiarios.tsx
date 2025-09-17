@@ -6,27 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useToast } from "@/hooks/use-toast";
-import { UserPlus, Users, Phone, Mail, MapPin, Heart } from "lucide-react";
+import { useBeneficiarios } from "@/hooks/useBeneficiarios";
+import { UserPlus, Users, Phone, Mail, MapPin, Heart, FileSpreadsheet, FileText } from "lucide-react";
+import { exportBeneficiariosToExcel, exportBeneficiariosToPDF } from "@/lib/export";
 import Navigation from "@/components/Navigation";
 
-interface Beneficiario {
-  id: string;
-  nome: string;
-  email?: string;
-  telefone: string;
-  idade: string;
-  endereco: string;
-  necessidades: string[];
-  observacoes: string;
-  responsavel?: string;
-  confirmouPresenca: boolean;
-  dataRegistro: string;
-}
-
 const Beneficiarios = () => {
-  const { toast } = useToast();
-  const [beneficiarios, setBeneficiarios] = useState<Beneficiario[]>([]);
+  const { beneficiarios, loading, addBeneficiario, togglePresenca } = useBeneficiarios();
   const [showForm, setShowForm] = useState(false);
 
   const areasAtendimento = [
@@ -43,7 +29,7 @@ const Beneficiarios = () => {
     "Doação de Alimentos"
   ];
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
@@ -51,37 +37,24 @@ const Beneficiarios = () => {
       formData.get(area.toLowerCase().replace(/\s+/g, '-')) === 'on'
     );
 
-    const novoBeneficiario: Beneficiario = {
-      id: Date.now().toString(),
-      nome: formData.get("nome") as string,
-      email: formData.get("email") as string || undefined,
-      telefone: formData.get("telefone") as string,
-      idade: formData.get("idade") as string,
-      endereco: formData.get("endereco") as string,
-      necessidades: necessidadesSelecionadas,
-      observacoes: formData.get("observacoes") as string,
-      responsavel: formData.get("responsavel") as string || undefined,
-      confirmouPresenca: false,
-      dataRegistro: new Date().toLocaleDateString("pt-BR"),
-    };
+    try {
+      await addBeneficiario({
+        nome: formData.get("nome") as string,
+        email: formData.get("email") as string || undefined,
+        telefone: formData.get("telefone") as string,
+        idade: parseInt(formData.get("idade") as string),
+        endereco: formData.get("endereco") as string,
+        necessidades: necessidadesSelecionadas,
+        observacoes: formData.get("observacoes") as string,
+        responsavel: formData.get("responsavel") as string || undefined,
+        confirmou_presenca: false,
+      });
 
-    setBeneficiarios([...beneficiarios, novoBeneficiario]);
-    setShowForm(false);
-    
-    toast({
-      title: "Beneficiário cadastrado!",
-      description: "Registro realizado com sucesso. Aguardamos você na ação social!",
-    });
-
-    (e.target as HTMLFormElement).reset();
-  };
-
-  const togglePresenca = (id: string) => {
-    setBeneficiarios(beneficiarios.map(beneficiario =>
-      beneficiario.id === id
-        ? { ...beneficiario, confirmouPresenca: !beneficiario.confirmouPresenca }
-        : beneficiario
-    ));
+      setShowForm(false);
+      (e.target as HTMLFormElement).reset();
+    } catch (error) {
+      // Error is handled in the hook
+    }
   };
 
   return (
@@ -101,13 +74,35 @@ const Beneficiarios = () => {
             </p>
           </div>
           
-          <Button 
-            onClick={() => setShowForm(!showForm)}
-            className="bg-love-green hover:bg-love-green/90 text-white shadow-gentle"
-          >
-            <UserPlus className="w-4 h-4 mr-2" />
-            {showForm ? "Cancelar" : "Nova Inscrição"}
-          </Button>
+          <div className="flex gap-2">
+            {beneficiarios.length > 0 && (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => exportBeneficiariosToExcel(beneficiarios)}
+                  className="shadow-gentle"
+                >
+                  <FileSpreadsheet className="w-4 h-4 mr-2" />
+                  Excel
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => exportBeneficiariosToPDF(beneficiarios)}
+                  className="shadow-gentle"
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  PDF
+                </Button>
+              </>
+            )}
+            <Button 
+              onClick={() => setShowForm(!showForm)}
+              className="bg-love-green hover:bg-love-green/90 text-white shadow-gentle"
+            >
+              <UserPlus className="w-4 h-4 mr-2" />
+              {showForm ? "Cancelar" : "Nova Inscrição"}
+            </Button>
+          </div>
         </div>
 
         {/* Formulário de Cadastro */}
@@ -229,11 +224,16 @@ const Beneficiarios = () => {
               Inscrições Realizadas ({beneficiarios.length})
             </h2>
             <div className="text-sm text-muted-foreground">
-              Presentes: {beneficiarios.filter(b => b.confirmouPresenca).length}
+              Presentes: {beneficiarios.filter(b => b.confirmou_presenca).length}
             </div>
           </div>
           
-          {beneficiarios.length === 0 ? (
+          {loading ? (
+            <Card className="p-8 text-center">
+              <div className="animate-spin w-8 h-8 border-2 border-love-green border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Carregando beneficiários...</p>
+            </Card>
+          ) : beneficiarios.length === 0 ? (
             <Card className="p-8 text-center">
               <Heart className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">
@@ -256,14 +256,14 @@ const Beneficiarios = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => togglePresenca(beneficiario.id)}
+                        onClick={() => togglePresenca(beneficiario.id!)}
                         className={`${
-                          beneficiario.confirmouPresenca 
+                          beneficiario.confirmou_presenca 
                             ? 'text-love-green hover:text-love-green/80' 
                             : 'text-muted-foreground hover:text-love-green'
                         }`}
                       >
-                        <Heart className={`w-4 h-4 ${beneficiario.confirmouPresenca ? 'fill-current' : ''}`} />
+                        <Heart className={`w-4 h-4 ${beneficiario.confirmou_presenca ? 'fill-current' : ''}`} />
                       </Button>
                     </div>
                   </CardHeader>
@@ -306,11 +306,11 @@ const Beneficiarios = () => {
                     )}
 
                     <div className="flex justify-between items-center text-xs text-muted-foreground pt-2 border-t">
-                      <span>Cadastrado em: {beneficiario.dataRegistro}</span>
+                      <span>Cadastrado em: {new Date(beneficiario.created_at || '').toLocaleDateString('pt-BR')}</span>
                       <span className={`font-medium ${
-                        beneficiario.confirmouPresenca ? 'text-love-green' : 'text-muted-foreground'
+                        beneficiario.confirmou_presenca ? 'text-love-green' : 'text-muted-foreground'
                       }`}>
-                        {beneficiario.confirmouPresenca ? 'Presente' : 'Aguardando'}
+                        {beneficiario.confirmou_presenca ? 'Presente' : 'Aguardando'}
                       </span>
                     </div>
                   </CardContent>
