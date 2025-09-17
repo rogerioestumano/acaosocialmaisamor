@@ -66,7 +66,7 @@ const Index = () => {
                 <CardTitle className="text-love-blue">Data</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold mb-2">28 de Setembro</p>
+                <p className="text-2xl font-bold mb-2">1° de Novembro</p>
                 <p className="text-muted-foreground">Sábado, 2025</p>
               </CardContent>
             </Card>
@@ -77,7 +77,7 @@ const Index = () => {
                 <CardTitle className="text-love-green">Horário</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold mb-2">8h às 16h</p>
+                <p className="text-2xl font-bold mb-2">15h às 18h</p>
                 <p className="text-muted-foreground">Atendimento contínuo</p>
               </CardContent>
             </Card>
@@ -88,8 +88,8 @@ const Index = () => {
                 <CardTitle className="text-love-gold">Local</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold mb-2">Igreja Adventista</p>
-                <p className="text-muted-foreground">Endereço será informado</p>
+                <p className="text-2xl font-bold mb-2">IAGP</p>
+                <p className="text-muted-foreground">Trav. Barão do Triunfo, 3577 - Marco, Belém/PA</p>
               </CardContent>
             </Card>
           </div>
