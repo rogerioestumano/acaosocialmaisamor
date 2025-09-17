@@ -4,6 +4,7 @@ import { Heart, Users, BarChart3, UserPlus, Calendar, MapPin, Clock } from "luci
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import heroImage from "@/assets/hero-mais-amor.jpg";
+import logoImage from "@/assets/mais-amor-logo.jpg";
 
 const Index = () => {
   return (
@@ -20,6 +21,13 @@ const Index = () => {
         
         <div className="relative container mx-auto px-4 py-24 text-center text-white">
           <div className="max-w-4xl mx-auto">
+            <div className="flex justify-center mb-8">
+              <img 
+                src={logoImage} 
+                alt="Mais Amor - Atendimento Comunitário" 
+                className="w-32 h-32 md:w-40 md:h-40 object-contain bg-white/10 backdrop-blur-sm rounded-2xl p-4 shadow-2xl border border-white/20"
+              />
+            </div>
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
               Mais Amor
             </h1>
@@ -167,9 +175,16 @@ const Index = () => {
       {/* Footer */}
       <footer className="bg-foreground text-background py-8">
         <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <Heart className="w-6 h-6 text-love-gold" />
-            <span className="text-xl font-bold">Mais Amor</span>
+          <div className="flex items-center justify-center space-x-3 mb-4">
+            <img 
+              src={logoImage} 
+              alt="Mais Amor" 
+              className="w-10 h-10 object-contain rounded-lg"
+            />
+            <div className="flex flex-col items-start">
+              <span className="text-xl font-bold">Mais Amor</span>
+              <span className="text-xs text-background/70 uppercase tracking-wider">Atendimento Comunitário</span>
+            </div>
           </div>
           <p className="text-background/70">
             Igreja Adventista do Sétimo Dia • Ação Social 2025

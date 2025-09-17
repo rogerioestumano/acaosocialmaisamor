@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Heart, Menu, X, Users, BarChart3, UserPlus } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import logoImage from "@/assets/mais-amor-logo.jpg";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,13 +22,16 @@ const Navigation = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center">
-              <Heart className="w-5 h-5 text-white" />
+          <Link to="/" className="flex items-center space-x-3">
+            <img 
+              src={logoImage} 
+              alt="Mais Amor - Atendimento Comunitário" 
+              className="w-10 h-10 object-contain rounded-lg shadow-sm"
+            />
+            <div className="flex flex-col">
+              <span className="font-bold text-lg text-foreground leading-tight">Mais Amor</span>
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">Atendimento Comunitário</span>
             </div>
-            <span className="font-bold text-xl bg-gradient-primary bg-clip-text text-transparent">
-              Mais Amor
-            </span>
           </Link>
 
           {/* Desktop Navigation */}
