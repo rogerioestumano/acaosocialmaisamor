@@ -2,30 +2,67 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { BarChart3, Users, Heart, UserCheck, Calendar, TrendingUp } from "lucide-react";
 import Navigation from "@/components/Navigation";
+import { useVoluntarios } from "@/hooks/useVoluntarios";
+import { useBeneficiarios } from "@/hooks/useBeneficiarios";
 
 const Dashboard = () => {
-  // Dados simulados - em uma aplicação real, estes viriam do banco de dados
-  const stats = {
-    totalVoluntarios: 24,
-    totalBeneficiarios: 156,
-    confirmados: 134,
-    areasAtendimento: [
-      { nome: "Consulta Médica", total: 45, confirmados: 38 },
-      { nome: "Consulta Odontológica", total: 32, confirmados: 28 },
-      { nome: "Corte de Cabelo", total: 67, confirmados: 59 },
-      { nome: "Orientação Jurídica", total: 18, confirmados: 15 },
-      { nome: "Atividades Infantis", total: 23, confirmados: 21 },
-      { nome: "Doação de Alimentos", total: 89, confirmados: 76 },
-    ],
-    ultimosCadastros: [
-      { nome: "Maria Silva", tipo: "Beneficiário", data: "16/09/2025" },
-      { nome: "João Santos", tipo: "Voluntário", data: "16/09/2025" },
-      { nome: "Ana Costa", tipo: "Beneficiário", data: "15/09/2025" },
-      { nome: "Pedro Lima", tipo: "Voluntário", data: "15/09/2025" },
-    ]
-  };
+  const { voluntarios, loading: loadingVoluntarios } = useVoluntarios();
+  const { beneficiarios, loading: loadingBeneficiarios } = useBeneficiarios();
 
-  const taxaConfirmacao = Math.round((stats.confirmados / stats.totalBeneficiarios) * 100);
+  const loading = loadingVoluntarios || loadingBeneficiarios;
+
+  // Calcular estatísticas reais dos dados
+  const totalVoluntarios = voluntarios.length;
+  const totalBeneficiarios = beneficiarios.length;
+  const confirmados = beneficiarios.filter(b => b.confirmou_presenca).length;
+  const taxaConfirmacao = totalBeneficiarios > 0 ? Math.round((confirmados / totalBeneficiarios) * 100) : 0;
+
+  // Agrupar beneficiários por necessidades
+  const necessidadesCounts = beneficiarios.reduce((acc, beneficiario) => {
+    beneficiario.necessidades.forEach(necessidade => {
+      if (!acc[necessidade]) {
+        acc[necessidade] = { total: 0, confirmados: 0 };
+      }
+      acc[necessidade].total++;
+      if (beneficiario.confirmou_presenca) {
+        acc[necessidade].confirmados++;
+      }
+    });
+    return acc;
+  }, {} as Record<string, { total: number; confirmados: number }>);
+
+  const areasAtendimento = Object.entries(necessidadesCounts).map(([nome, data]) => ({
+    nome,
+    total: data.total,
+    confirmados: data.confirmados
+  }));
+
+  // Últimos cadastros (combinar voluntários e beneficiários)
+  const ultimosCadastros = [
+    ...voluntarios.slice(0, 2).map(v => ({
+      nome: v.nome,
+      tipo: "Voluntário" as const,
+      data: new Date(v.created_at || '').toLocaleDateString("pt-BR")
+    })),
+    ...beneficiarios.slice(0, 2).map(b => ({
+      nome: b.nome,
+      tipo: "Beneficiário" as const,
+      data: new Date(b.created_at || '').toLocaleDateString("pt-BR")
+    }))
+  ].sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime()).slice(0, 4);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full"></div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -51,7 +88,7 @@ const Dashboard = () => {
               <Users className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{stats.totalVoluntarios}</div>
+              <div className="text-2xl font-bold text-primary">{totalVoluntarios}</div>
               <p className="text-xs text-muted-foreground">
                 Pessoas dispostas a ajudar
               </p>
@@ -64,7 +101,7 @@ const Dashboard = () => {
               <Heart className="h-4 w-4 text-love-green" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-love-green">{stats.totalBeneficiarios}</div>
+              <div className="text-2xl font-bold text-love-green">{totalBeneficiarios}</div>
               <p className="text-xs text-muted-foreground">
                 Inscrições realizadas
               </p>
@@ -77,7 +114,7 @@ const Dashboard = () => {
               <UserCheck className="h-4 w-4 text-love-gold" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-love-gold">{stats.confirmados}</div>
+              <div className="text-2xl font-bold text-love-gold">{confirmados}</div>
               <p className="text-xs text-muted-foreground">
                 Presença confirmada
               </p>
@@ -109,8 +146,8 @@ const Dashboard = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {stats.areasAtendimento.map((area) => {
-                const porcentagem = Math.round((area.confirmados / area.total) * 100);
+              {areasAtendimento.length > 0 ? areasAtendimento.map((area) => {
+                const porcentagem = area.total > 0 ? Math.round((area.confirmados / area.total) * 100) : 0;
                 return (
                   <div key={area.nome} className="space-y-2">
                     <div className="flex justify-between items-center">
@@ -125,7 +162,11 @@ const Dashboard = () => {
                     />
                   </div>
                 );
-              })}
+              }) : (
+                <p className="text-center text-muted-foreground py-4">
+                  Nenhum atendimento cadastrado ainda
+                </p>
+              )}
             </CardContent>
           </Card>
 
@@ -139,7 +180,7 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {stats.ultimosCadastros.map((cadastro, index) => (
+                {ultimosCadastros.length > 0 ? ultimosCadastros.map((cadastro, index) => (
                   <div key={index} className="flex items-center space-x-4">
                     <div className={`w-2 h-2 rounded-full ${
                       cadastro.tipo === 'Voluntário' ? 'bg-primary' : 'bg-love-green'
@@ -156,7 +197,11 @@ const Dashboard = () => {
                       {cadastro.data}
                     </div>
                   </div>
-                ))}
+                )) : (
+                  <p className="text-center text-muted-foreground py-4">
+                    Nenhum cadastro realizado ainda
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -177,7 +222,7 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center p-6 bg-love-light rounded-lg">
                 <div className="text-3xl font-bold text-love-blue mb-2">
-                  {stats.totalVoluntarios + stats.totalBeneficiarios}
+                  {totalVoluntarios + totalBeneficiarios}
                 </div>
                 <div className="text-sm text-love-blue">
                   Total de Pessoas Envolvidas
@@ -186,7 +231,7 @@ const Dashboard = () => {
               
               <div className="text-center p-6 bg-secondary rounded-lg">
                 <div className="text-3xl font-bold text-secondary-foreground mb-2">
-                  {stats.areasAtendimento.length}
+                  {areasAtendimento.length}
                 </div>
                 <div className="text-sm text-secondary-foreground">
                   Áreas de Atendimento
@@ -195,7 +240,7 @@ const Dashboard = () => {
               
               <div className="text-center p-6 bg-accent rounded-lg">
                 <div className="text-3xl font-bold text-accent-foreground mb-2">
-                  {Math.round(stats.confirmados / stats.areasAtendimento.length)}
+                  {areasAtendimento.length > 0 ? Math.round(confirmados / areasAtendimento.length) : 0}
                 </div>
                 <div className="text-sm text-accent-foreground">
                   Média por Área
@@ -206,7 +251,7 @@ const Dashboard = () => {
             <div className="mt-6 p-4 bg-muted rounded-lg">
               <h4 className="font-semibold text-foreground mb-2">🎯 Meta de Atendimento</h4>
               <p className="text-sm text-muted-foreground">
-                Com {stats.totalVoluntarios} voluntários cadastrados e {stats.confirmados} pessoas confirmadas, 
+                Com {totalVoluntarios} voluntários cadastrados e {confirmados} pessoas confirmadas, 
                 estamos preparados para realizar uma ação social de grande impacto na comunidade. 
                 A taxa de confirmação de {taxaConfirmacao}% demonstra o interesse e necessidade da população pelos serviços oferecidos.
               </p>

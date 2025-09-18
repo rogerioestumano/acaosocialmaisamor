@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase, Voluntario } from '@/lib/supabase'
+import { supabase, type Voluntario } from '@/lib/supabase'
 import { useToast } from '@/hooks/use-toast'
 
 export const useVoluntarios = () => {
