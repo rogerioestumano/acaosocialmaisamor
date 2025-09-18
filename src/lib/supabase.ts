@@ -1,14 +1,20 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://your-project.supabase.co'
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key'
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-// Verify environment variables are configured
-if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
-  console.warn('Supabase environment variables not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env.local file.')
+// Create a fallback client even if env variables are not set
+export const supabase = createClient(
+  supabaseUrl || 'https://placeholder.supabase.co', 
+  supabaseAnonKey || 'placeholder-key'
+)
+
+// Check if properly configured
+export const isSupabaseConfigured = () => {
+  return supabaseUrl && supabaseAnonKey && 
+         supabaseUrl !== 'your-supabase-project-url' && 
+         supabaseAnonKey !== 'your-supabase-anon-key'
 }
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 // Database types
 export interface Voluntario {

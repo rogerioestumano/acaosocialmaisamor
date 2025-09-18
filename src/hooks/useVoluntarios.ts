@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase, type Voluntario } from '@/lib/supabase'
+import { supabase, isSupabaseConfigured, type Voluntario } from '@/lib/supabase'
 import { useToast } from '@/hooks/use-toast'
 
 export const useVoluntarios = () => {
@@ -11,6 +11,14 @@ export const useVoluntarios = () => {
   const fetchVoluntarios = async () => {
     try {
       setLoading(true)
+      
+      // Check if Supabase is configured
+      if (!isSupabaseConfigured()) {
+        setVoluntarios([])
+        setLoading(false)
+        return
+      }
+
       const { data, error } = await supabase
         .from('voluntarios')
         .select('*')
@@ -34,6 +42,16 @@ export const useVoluntarios = () => {
   // Add new voluntario
   const addVoluntario = async (voluntario: Omit<Voluntario, 'id' | 'created_at'>) => {
     try {
+      // Check if Supabase is configured
+      if (!isSupabaseConfigured()) {
+        toast({
+          title: "Configuração necessária",
+          description: "Configure o Supabase para salvar dados reais.",
+          variant: "destructive"
+        })
+        throw new Error('Supabase not configured')
+      }
+
       const { data, error } = await supabase
         .from('voluntarios')
         .insert([voluntario])
