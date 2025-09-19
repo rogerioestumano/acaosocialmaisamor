@@ -14,7 +14,148 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      beneficiarios: {
+        Row: {
+          confirmou_presenca: boolean | null
+          created_at: string
+          email: string | null
+          endereco: string
+          id: string
+          idade: number
+          necessidades: string[]
+          nome: string
+          observacoes: string | null
+          responsavel: string | null
+          telefone: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          confirmou_presenca?: boolean | null
+          created_at?: string
+          email?: string | null
+          endereco: string
+          id?: string
+          idade: number
+          necessidades?: string[]
+          nome: string
+          observacoes?: string | null
+          responsavel?: string | null
+          telefone: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          confirmou_presenca?: boolean | null
+          created_at?: string
+          email?: string | null
+          endereco?: string
+          id?: string
+          idade?: number
+          necessidades?: string[]
+          nome?: string
+          observacoes?: string | null
+          responsavel?: string | null
+          telefone?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beneficiarios_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          nome: string
+          telefone: string | null
+          updated_at: string
+          user_id: string
+          user_type: Database["public"]["Enums"]["user_type"]
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          nome: string
+          telefone?: string | null
+          updated_at?: string
+          user_id: string
+          user_type?: Database["public"]["Enums"]["user_type"]
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          nome?: string
+          telefone?: string | null
+          updated_at?: string
+          user_id?: string
+          user_type?: Database["public"]["Enums"]["user_type"]
+        }
+        Relationships: []
+      }
+      voluntarios: {
+        Row: {
+          area: string
+          created_at: string
+          disponibilidade: string
+          email: string
+          endereco: string
+          experiencia: string | null
+          id: string
+          idade: number
+          nome: string
+          telefone: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          area: string
+          created_at?: string
+          disponibilidade: string
+          email: string
+          endereco: string
+          experiencia?: string | null
+          id?: string
+          idade: number
+          nome: string
+          telefone: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          area?: string
+          created_at?: string
+          disponibilidade?: string
+          email?: string
+          endereco?: string
+          experiencia?: string | null
+          id?: string
+          idade?: number
+          nome?: string
+          telefone?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voluntarios_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +164,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      user_type: "admin" | "beneficiario"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +291,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_type: ["admin", "beneficiario"],
+    },
   },
 } as const
