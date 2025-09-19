@@ -1,12 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Heart, Users, BarChart3, UserPlus, Calendar, MapPin, Clock } from "lucide-react";
+import { Heart, Users, BarChart3, UserPlus, Calendar, MapPin, Clock, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import Navigation from "@/components/Navigation";
 import heroImage from "@/assets/hero-mais-amor.jpg";
 import logoImage from "@/assets/mais-amor-logo.jpg";
 
 const Index = () => {
+  const { user, isAdmin, isBeneficiario } = useAuth();
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -40,18 +43,39 @@ const Index = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-white text-love-blue hover:bg-white/90 shadow-love">
-                <Link to="/beneficiarios">
-                  <Heart className="w-5 h-5 mr-2" />
-                  Quero Participar
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-love-blue">
-                <Link to="/voluntarios">
-                  <Users className="w-5 h-5 mr-2" />
-                  Ser Voluntário
-                </Link>
-              </Button>
+              {user ? (
+                <>
+                  <Button asChild size="lg" className="bg-white text-love-blue hover:bg-white/90 shadow-love">
+                    <Link to="/beneficiarios">
+                      <Heart className="w-5 h-5 mr-2" />
+                      {isBeneficiario ? 'Meu Cadastro' : 'Ver Beneficiários'}
+                    </Link>
+                  </Button>
+                  {isAdmin && (
+                    <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-love-blue">
+                      <Link to="/voluntarios">
+                        <Users className="w-5 h-5 mr-2" />
+                        Ver Voluntários
+                      </Link>
+                    </Button>
+                  )}
+                </>
+              ) : (
+                <>
+                  <Button asChild size="lg" className="bg-white text-love-blue hover:bg-white/90 shadow-love">
+                    <Link to="/auth">
+                      <LogIn className="w-5 h-5 mr-2" />
+                      Quero Participar
+                    </Link>
+                  </Button>
+                  <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-love-blue">
+                    <Link to="/auth">
+                      <Users className="w-5 h-5 mr-2" />
+                      Ser Voluntário
+                    </Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -149,24 +173,47 @@ const Index = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-white text-love-blue hover:bg-white/90 shadow-love">
-                <Link to="/beneficiarios">
-                  <UserPlus className="w-5 h-5 mr-2" />
-                  Cadastrar-se
-                </Link>
-              </Button>
-              <Button asChild size="lg" className="bg-white text-love-green hover:bg-white/90 shadow-love">
-                <Link to="/voluntarios">
-                  <Users className="w-5 h-5 mr-2" />
-                  Ser Voluntário
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-love-blue">
-                <Link to="/dashboard">
-                  <BarChart3 className="w-5 h-5 mr-2" />
-                  Ver Dados
-                </Link>
-              </Button>
+              {user ? (
+                <>
+                  <Button asChild size="lg" className="bg-white text-love-blue hover:bg-white/90 shadow-love">
+                    <Link to="/beneficiarios">
+                      <UserPlus className="w-5 h-5 mr-2" />
+                      {isBeneficiario ? 'Meu Cadastro' : 'Ver Beneficiários'}
+                    </Link>
+                  </Button>
+                  {isAdmin && (
+                    <>
+                      <Button asChild size="lg" className="bg-white text-love-green hover:bg-white/90 shadow-love">
+                        <Link to="/voluntarios">
+                          <Users className="w-5 h-5 mr-2" />
+                          Ver Voluntários
+                        </Link>
+                      </Button>
+                      <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-love-blue">
+                        <Link to="/dashboard">
+                          <BarChart3 className="w-5 h-5 mr-2" />
+                          Dashboard
+                        </Link>
+                      </Button>
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
+                  <Button asChild size="lg" className="bg-white text-love-blue hover:bg-white/90 shadow-love">
+                    <Link to="/auth">
+                      <LogIn className="w-5 h-5 mr-2" />
+                      Cadastrar-se
+                    </Link>
+                  </Button>
+                  <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-love-blue">
+                    <Link to="/auth">
+                      <Users className="w-5 h-5 mr-2" />
+                      Ser Voluntário
+                    </Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

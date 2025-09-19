@@ -1,20 +1,45 @@
 import { useState, useEffect } from 'react'
-import { supabase, type Beneficiario } from '@/lib/supabase'
+import { supabase } from '@/integrations/supabase/client'
+import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/hooks/use-toast'
+
+interface Beneficiario {
+  id: string;
+  user_id?: string;
+  nome: string;
+  email?: string;
+  telefone: string;
+  idade: number;
+  endereco: string;
+  necessidades: string[];
+  observacoes?: string;
+  responsavel?: string;
+  confirmou_presenca: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
 export const useBeneficiarios = () => {
   const [beneficiarios, setBeneficiarios] = useState<Beneficiario[]>([])
   const [loading, setLoading] = useState(true)
   const { toast } = useToast()
+  const { user, isAdmin, isBeneficiario } = useAuth()
 
   // Fetch beneficiarios from database
   const fetchBeneficiarios = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase
+      
+      let query = supabase
         .from('beneficiarios')
         .select('*')
-        .order('created_at', { ascending: false })
+
+      // If user is beneficiario, only show their own records
+      if (isBeneficiario) {
+        query = query.eq('user_id', user?.id)
+      }
+
+      const { data, error } = await query.order('created_at', { ascending: false })
 
       if (error) throw error
 
@@ -32,11 +57,14 @@ export const useBeneficiarios = () => {
   }
 
   // Add new beneficiario
-  const addBeneficiario = async (beneficiario: Omit<Beneficiario, 'id' | 'created_at'>) => {
+  const addBeneficiario = async (beneficiario: Omit<Beneficiario, 'id' | 'created_at' | 'updated_at'>) => {
     try {
       const { data, error } = await supabase
         .from('beneficiarios')
-        .insert([beneficiario])
+        .insert([{
+          ...beneficiario,
+          user_id: user?.id
+        }])
         .select()
         .single()
 
@@ -89,8 +117,10 @@ export const useBeneficiarios = () => {
   }
 
   useEffect(() => {
-    fetchBeneficiarios()
-  }, [])
+    if (user) {
+      fetchBeneficiarios()
+    }
+  }, [user, isAdmin, isBeneficiario])
 
   return {
     beneficiarios,

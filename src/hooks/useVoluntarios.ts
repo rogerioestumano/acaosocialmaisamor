@@ -1,24 +1,34 @@
 import { useState, useEffect } from 'react'
-import { supabase, isSupabaseConfigured, type Voluntario } from '@/lib/supabase'
+import { supabase } from '@/integrations/supabase/client'
+import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/hooks/use-toast'
+
+interface Voluntario {
+  id: string;
+  user_id?: string;
+  nome: string;
+  email: string;
+  telefone: string;
+  idade: number;
+  endereco: string;
+  area: string;
+  experiencia?: string;
+  disponibilidade: string;
+  created_at: string;
+  updated_at: string;
+}
 
 export const useVoluntarios = () => {
   const [voluntarios, setVoluntarios] = useState<Voluntario[]>([])
   const [loading, setLoading] = useState(true)
   const { toast } = useToast()
+  const { user } = useAuth()
 
   // Fetch voluntarios from database
   const fetchVoluntarios = async () => {
     try {
       setLoading(true)
       
-      // Check if Supabase is configured
-      if (!isSupabaseConfigured()) {
-        setVoluntarios([])
-        setLoading(false)
-        return
-      }
-
       const { data, error } = await supabase
         .from('voluntarios')
         .select('*')
@@ -40,21 +50,14 @@ export const useVoluntarios = () => {
   }
 
   // Add new voluntario
-  const addVoluntario = async (voluntario: Omit<Voluntario, 'id' | 'created_at'>) => {
+  const addVoluntario = async (voluntario: Omit<Voluntario, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      // Check if Supabase is configured
-      if (!isSupabaseConfigured()) {
-        toast({
-          title: "Configuração necessária",
-          description: "Configure o Supabase para salvar dados reais.",
-          variant: "destructive"
-        })
-        throw new Error('Supabase not configured')
-      }
-
       const { data, error } = await supabase
         .from('voluntarios')
-        .insert([voluntario])
+        .insert([{
+          ...voluntario,
+          user_id: user?.id
+        }])
         .select()
         .single()
 
@@ -79,8 +82,10 @@ export const useVoluntarios = () => {
   }
 
   useEffect(() => {
-    fetchVoluntarios()
-  }, [])
+    if (user) {
+      fetchVoluntarios()
+    }
+  }, [user])
 
   return {
     voluntarios,
