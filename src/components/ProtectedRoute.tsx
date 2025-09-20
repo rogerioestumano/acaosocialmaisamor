@@ -29,13 +29,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/auth" replace />;
   }
 
-  // Check admin requirement
-  if (requireAdmin && profile.user_type !== 'admin') {
-    return <Navigate to="/" replace />;
-  }
-
-  // Check beneficiario requirement
-  if (requireBeneficiario && profile.user_type !== 'beneficiario') {
+  // Only allow admin users to access protected routes
+  if (profile.user_type !== 'admin') {
     return <Navigate to="/" replace />;
   }
 

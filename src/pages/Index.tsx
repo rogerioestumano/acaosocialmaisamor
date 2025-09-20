@@ -62,14 +62,14 @@ const Index = () => {
                 </>
               ) : (
                 <>
-                  <Button asChild size="lg" className="bg-white text-love-blue hover:bg-white/90 shadow-love">
-                    <Link to="/auth">
-                      <LogIn className="w-5 h-5 mr-2" />
+                  <Button asChild size="lg" className="bg-love-coral hover:bg-love-coral/90 text-white shadow-love">
+                    <Link to="/cadastro-beneficiario">
+                      <Heart className="w-5 h-5 mr-2" />
                       Quero Participar
                     </Link>
                   </Button>
                   <Button asChild size="lg" className="bg-white/20 text-white border border-white/30 hover:bg-white hover:text-love-blue shadow-love backdrop-blur-sm">
-                    <Link to="/auth">
+                    <Link to="/cadastro-voluntario">
                       <Users className="w-5 h-5 mr-2" />
                       Ser Voluntário
                     </Link>
@@ -200,14 +200,14 @@ const Index = () => {
                 </>
               ) : (
                 <>
-                  <Button asChild size="lg" className="bg-white text-love-blue hover:bg-white/90 shadow-love">
-                    <Link to="/auth">
-                      <LogIn className="w-5 h-5 mr-2" />
+                  <Button asChild size="lg" className="bg-love-coral hover:bg-love-coral/90 text-white shadow-love">
+                    <Link to="/cadastro-beneficiario">
+                      <Heart className="w-5 h-5 mr-2" />
                       Cadastrar-se
                     </Link>
                   </Button>
                   <Button asChild size="lg" className="bg-white/20 text-white border border-white/30 hover:bg-white hover:text-love-blue shadow-love backdrop-blur-sm">
-                    <Link to="/auth">
+                    <Link to="/cadastro-voluntario">
                       <Users className="w-5 h-5 mr-2" />
                       Ser Voluntário
                     </Link>

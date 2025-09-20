@@ -7,6 +7,8 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import CadastroVoluntario from "./pages/CadastroVoluntario";
+import CadastroBeneficiario from "./pages/CadastroBeneficiario";
 import Voluntarios from "./pages/Voluntarios";
 import Beneficiarios from "./pages/Beneficiarios";
 import Dashboard from "./pages/Dashboard";
@@ -24,10 +26,12 @@ const App = () => (
           <Routes>
             <Route path="/auth" element={<Auth />} />
             <Route path="/" element={<Index />} />
+            <Route path="/cadastro-voluntario" element={<CadastroVoluntario />} />
+            <Route path="/cadastro-beneficiario" element={<CadastroBeneficiario />} />
             <Route 
               path="/voluntarios" 
               element={
-                <ProtectedRoute requireAdmin>
+                <ProtectedRoute>
                   <Voluntarios />
                 </ProtectedRoute>
               } 
@@ -43,7 +47,7 @@ const App = () => (
             <Route 
               path="/dashboard" 
               element={
-                <ProtectedRoute requireAdmin>
+                <ProtectedRoute>
                   <Dashboard />
                 </ProtectedRoute>
               } 
