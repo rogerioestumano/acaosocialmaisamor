@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Heart, User, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { useBeneficiarios } from '@/hooks/useBeneficiarios';
 
 interface Voluntario {
   id: string;
@@ -24,7 +24,7 @@ const CadastroBeneficiario = () => {
   const [voluntarios, setVoluntarios] = useState<Voluntario[]>([]);
   const [necessidades, setNecessidades] = useState<string[]>([]);
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { addBeneficiario } = useBeneficiarios();
 
   const necessidadesOptions = [
     'Alimentação',
@@ -85,17 +85,7 @@ const CadastroBeneficiario = () => {
         confirmou_presenca: false,
       };
 
-      const { error } = await supabase
-        .from('beneficiarios')
-        .insert([beneficiarioData]);
-
-      if (error) throw error;
-
-      toast({
-        title: "Cadastro realizado com sucesso!",
-        description: "Seu cadastro foi registrado. Entraremos em contato em breve.",
-      });
-
+      await addBeneficiario(beneficiarioData);
       navigate('/');
     } catch (error: any) {
       console.error('Error:', error);
