@@ -25,7 +25,7 @@ export interface Voluntario {
   idade: number;
   endereco: string;
   area: string;
-  experiencia: string;
+  experiencia?: string;
   disponibilidade: string;
   created_at?: string;
 }
@@ -38,7 +38,7 @@ export interface Beneficiario {
   idade: number;
   endereco: string;
   necessidades: string[];
-  observacoes: string;
+  observacoes?: string;
   responsavel?: string;
   confirmou_presenca: boolean;
   created_at?: string;
