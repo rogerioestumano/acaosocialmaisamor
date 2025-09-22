@@ -53,6 +53,8 @@ export default {
           green: "hsl(var(--love-green))",
           gold: "hsl(var(--love-gold))",
           light: "hsl(var(--love-light))",
+          red: "hsl(var(--love-red))",
+          "red-dark": "hsl(var(--love-red-dark))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
@@ -69,6 +71,7 @@ export default {
         "gradient-primary": "var(--gradient-primary)",
         "gradient-secondary": "var(--gradient-secondary)",
         "gradient-hero": "var(--gradient-hero)",
+        "gradient-red": "var(--gradient-red)",
       },
       boxShadow: {
         "love": "var(--shadow-love)",
