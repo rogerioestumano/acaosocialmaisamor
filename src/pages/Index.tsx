@@ -61,20 +61,12 @@ const Index = () => {
                   )}
                 </>
               ) : (
-                <>
-                  <Button asChild size="lg" className="bg-love-coral hover:bg-love-coral/90 text-white shadow-love">
-                    <Link to="/cadastro-beneficiario">
-                      <Heart className="w-5 h-5 mr-2" />
-                      Quero Participar
-                    </Link>
-                  </Button>
-                  <Button asChild size="lg" className="bg-white/20 text-white border border-white/30 hover:bg-white hover:text-love-blue shadow-love backdrop-blur-sm">
-                    <Link to="/cadastro-voluntario">
-                      <Users className="w-5 h-5 mr-2" />
-                      Ser Voluntário
-                    </Link>
-                  </Button>
-                </>
+                <Button asChild size="lg" className="bg-love-coral hover:bg-love-coral/90 text-white shadow-love">
+                  <Link to="/cadastro-beneficiario">
+                    <Heart className="w-5 h-5 mr-2" />
+                    Quero Participar
+                  </Link>
+                </Button>
               )}
             </div>
           </div>
@@ -169,7 +161,7 @@ const Index = () => {
               Faça Parte Desta Missão de Amor
             </h2>
             <p className="text-xl mb-8 text-white/90">
-              Seja como voluntário ou beneficiário, sua participação é importante para o sucesso desta ação social
+              Sua participação é importante para o sucesso desta ação social
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -199,20 +191,12 @@ const Index = () => {
                   )}
                 </>
               ) : (
-                <>
-                  <Button asChild size="lg" className="bg-love-coral hover:bg-love-coral/90 text-white shadow-love">
-                    <Link to="/cadastro-beneficiario">
-                      <Heart className="w-5 h-5 mr-2" />
-                      Cadastrar-se
-                    </Link>
-                  </Button>
-                  <Button asChild size="lg" className="bg-white/20 text-white border border-white/30 hover:bg-white hover:text-love-blue shadow-love backdrop-blur-sm">
-                    <Link to="/cadastro-voluntario">
-                      <Users className="w-5 h-5 mr-2" />
-                      Ser Voluntário
-                    </Link>
-                  </Button>
-                </>
+                <Button asChild size="lg" className="bg-love-coral hover:bg-love-coral/90 text-white shadow-love">
+                  <Link to="/cadastro-beneficiario">
+                    <Heart className="w-5 h-5 mr-2" />
+                    Cadastrar-se
+                  </Link>
+                </Button>
               )}
             </div>
           </div>
