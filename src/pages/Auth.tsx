@@ -9,10 +9,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import AdminPasswordProtection from '@/components/AdminPasswordProtection';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>('');
+  const [isPasswordVerified, setIsPasswordVerified] = useState(false);
   const navigate = useNavigate();
   const { signIn, signUp, user } = useAuth();
 
@@ -89,6 +91,11 @@ const Auth = () => {
       setIsLoading(false);
     }
   };
+
+  // If password not verified, show admin password protection
+  if (!isPasswordVerified) {
+    return <AdminPasswordProtection onPasswordCorrect={() => setIsPasswordVerified(true)} />;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20 p-4">
