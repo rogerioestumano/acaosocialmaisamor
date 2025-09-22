@@ -214,10 +214,10 @@ const CadastroBeneficiario = () => {
 
               <Button 
                 type="submit" 
-                className="w-full bg-love-coral hover:bg-love-coral/90"
+                className="w-full bg-gradient-red hover:opacity-90 text-white shadow-love transition-all"
                 disabled={loading || necessidades.length === 0}
               >
-                {loading ? 'Cadastrando...' : 'Cadastrar'}
+                {loading ? 'Salvando...' : 'Salvar o cadastro'}
               </Button>
 
               {necessidades.length === 0 && (
