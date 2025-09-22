@@ -206,7 +206,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="bg-foreground text-background py-8">
         <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center space-x-3 mb-4">
+          <div className="flex items-center justify-center space-x-3 mb-6">
             <img 
               src={logoImage} 
               alt="Mais Amor" 
@@ -217,6 +217,16 @@ const Index = () => {
               <span className="text-xs text-background/70 uppercase tracking-wider">Atendimento Comunitário</span>
             </div>
           </div>
+          
+          <div className="mb-6">
+            <Button asChild size="lg" className="bg-gradient-blue hover:opacity-90 text-white shadow-love transition-all">
+              <Link to="/cadastro-voluntario">
+                <Users className="w-5 h-5 mr-2" />
+                Cadastro Voluntário
+              </Link>
+            </Button>
+          </div>
+          
           <p className="text-background/70">
             Igreja Adventista do Sétimo Dia • Ação Social 2025
           </p>

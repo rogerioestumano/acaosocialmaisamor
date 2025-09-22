@@ -72,6 +72,7 @@ export default {
         "gradient-secondary": "var(--gradient-secondary)",
         "gradient-hero": "var(--gradient-hero)",
         "gradient-red": "var(--gradient-red)",
+        "gradient-blue": "var(--gradient-blue)",
       },
       boxShadow: {
         "love": "var(--shadow-love)",
