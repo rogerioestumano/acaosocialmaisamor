@@ -29,10 +29,10 @@ const Navigation = () => {
 
     if (isAdmin) {
       return [
-        ...baseItems,
+        { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
         { name: "Voluntários", href: "/voluntarios", icon: Users },
         { name: "Beneficiários", href: "/beneficiarios", icon: UserPlus },
-        { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
+        { name: "Início", href: "/", icon: Heart },
       ];
     }
 
