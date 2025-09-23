@@ -16,14 +16,18 @@ const Auth = () => {
   const [error, setError] = useState<string>('');
   const [isPasswordVerified, setIsPasswordVerified] = useState(false);
   const navigate = useNavigate();
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, user, profile, isAdmin } = useAuth();
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (user) {
-      navigate('/');
+    if (user && profile) {
+      if (isAdmin) {
+        navigate('/dashboard');
+      } else {
+        navigate('/');
+      }
     }
-  }, [user, navigate]);
+  }, [user, profile, isAdmin, navigate]);
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,7 +51,7 @@ const Auth = () => {
         }
       } else {
         toast.success('Login realizado com sucesso!');
-        navigate('/');
+        // Redirect will be handled by useEffect when profile loads
       }
     } catch (err) {
       setError('Erro inesperado. Tente novamente.');

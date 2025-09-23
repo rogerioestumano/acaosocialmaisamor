@@ -12,6 +12,7 @@ import CadastroBeneficiario from "./pages/CadastroBeneficiario";
 import Voluntarios from "./pages/Voluntarios";
 import Beneficiarios from "./pages/Beneficiarios";
 import Dashboard from "./pages/Dashboard";
+import AdminRedirect from "@/components/AdminRedirect";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,7 +26,11 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={
+              <AdminRedirect>
+                <Index />
+              </AdminRedirect>
+            } />
             <Route path="/cadastro-voluntario" element={<CadastroVoluntario />} />
             <Route path="/cadastro-beneficiario" element={<CadastroBeneficiario />} />
             <Route 
